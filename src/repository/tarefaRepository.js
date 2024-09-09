@@ -17,23 +17,44 @@ class TarefaRepository {
         }
     }
 
-    async updateTarefa(updateData) {
+    async updateTarefa(id, updateData) {
         try {
-            return await Tarefa.update(updateData);
+            const tarefa = await Tarefa.findByPk(id);
+            if (!tarefa){
+                throw new Error('Tarefa não encontrada para atualização');
+            }
+            await tarefa.update(updateData);
+            return tarefa;
+
         } catch (error) {
             throw new Error('Erro ao atualizar um tarefa:' + error.message);
         }
     }
 
-    async deleteTarefa() {
+    async deleteTarefa(id) {
         try {
-
+            const tarefa = await Tarefa.findByPk(id);
+            if (!tarefa){
+                throw new Error('Tarefa não encontrada');
+            }
+            await tarefa.destroy(); // deletar a tarefa
+            return { messesge: 'Tarefa deletada com sucesso'};
         }catch (error) {
             throw new Error('Error ao deletar tarefa', + error.message)
         }
     }
 
-    // continuar o detelte, update e get by id;
+    async getTareById(id) {
+        try {
+            const tarefa = await Tarefa.findByPk(id);
+            if (!tarefa) {
+                throw new Error('Tarefa não encontrada');
+            }
+            return tarefa;
+        } catch(error) {
+            throw new Error('Error ao buscar tarefa por ID:' + error.message);
+        }
+    }
 }
 
 module.exports = new TarefaRepository();
